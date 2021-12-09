@@ -17,8 +17,8 @@ const apollo = new ApolloServer({
 });
 
 const app = express();
-app.use(logger("tiny"));
-apollo.applyMiddleware({ app });
+app.use(logger("tiny"));  // log확인 가능
+apollo.applyMiddleware({ app }); // middleware 사용은 로거 다음줄에 써야함
 app.use("/static", express.static("uploads"));
 app.listen({ port: PORT }, () => {
   console.log(`🚀Server is running on http://localhost:${PORT}/graphql ✅`);
