@@ -10,19 +10,23 @@ generator client {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   firstName String
   lastName  String?
-  username  String   @unique
-  email     String   @unique
+  username  String    @unique
+  email     String    @unique
   password  String
   bio       String?
   avatar    String?
   photos    Photo[]
-  followers User[]   @relation("FollowRelation", references: [id])
-  following User[]   @relation("FollowRelation", references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  followers User[]    @relation("FollowRelation", references: [id])
+  following User[]    @relation("FollowRelation", references: [id])
+  likes     Like[]
+  comment   Comment[]
+  rooms     Room[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Message   Message[]
 }
 
 model Photo {
@@ -34,12 +38,56 @@ model Photo {
   hashtags  Hashtag[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  likes     Like[]
+  comment   Comment[]
 }
 
 model Hashtag {
   id        Int      @id @default(autoincrement())
   hashtag   String   @unique
   photos    Photo[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  photo     Photo    @relation(fields: [photoId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  photoId   Int
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([photoId, userId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  photo     Photo    @relation(fields: [photoId], references: [id])
+  payload   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  photoId   Int
+}
+
+model Room {
+  id        Int       @id @default(autoincrement())
+  users     User[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Message   Message[]
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  payload   String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  room      Room     @relation(fields: [roomId], references: [id])
+  roomId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
